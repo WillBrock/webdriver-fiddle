@@ -1,10 +1,10 @@
 <script>
-	export let name;
+	export let name, icon, path;
 	$: type = name.slice(name.lastIndexOf('.') + 1);
 </script>
 
-<span>
-	<i class="icon yellow {name.match(/.json/) ? `` : `js square`}"></i>
+<span data-name={name} data-path={path}>
+	<i class="icon yellow {icon}"></i>
 	{name}
 </span>
 

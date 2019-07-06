@@ -30,7 +30,6 @@ Spec Files:      1 passed, 1 total (100% completed) in 00:00:07
 		background-color: #20262e;
 		color: #FFF;
 		min-height: 100vh;
-		width: 100%;
 		overflow-y: scroll;
 		padding: 10px;
 	}

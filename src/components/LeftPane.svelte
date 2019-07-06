@@ -2,43 +2,11 @@
 	import Folder from './Folder.svelte';
 	import File   from './File.svelte';
 
-	const all_files = [
-		{
-			name  : `tests`,
-			type  : `folder`,
-			files : [
-				{
-					name    : `test-1.js`,
-					content : ``,
-					type    : `file`,
-				},
-				{
-					name    : `test-2.js`,
-					content : ``,
-					type    : `file`,
-				},
-				{
-					name    : `Register.page.js`,
-					content : ``,
-					type    : `file`,
-				},
-			],
-		},
-		{
-			name    : `package.json`,
-			content : ``,
-			type    : `file`,
-		},
-		{
-			name    : `wdio.conf.js`,
-			content : ``,
-			type    : `file`,
-		}
-	];
+	export let all_files;
 
 	const accordion = {
 		templates    : false,
-		files        : false,
+		files        : true,
 		dependencies : false,
 		cliargs      : false,
 	};
@@ -60,12 +28,16 @@
 
 	function handleAccordionClick(e) {
 		const title = e.target.dataset.title;
-
 		accordion[title] = !accordion[title];
 	}
 </script>
 
 <div class="container">
+	<button class="ui button small framework-selection">
+		WebdriverIO
+		<i class="icon chevron down"></i>
+	</button>
+
 	<div class="accordion">
 		<div class="title" data-title="templates" on:click={handleAccordionClick}>
 			<i class="icon angle {accordion.templates ? 'down' : 'right'}"></i>
@@ -87,24 +59,13 @@
 			<span class="icon-container">
 				<i class="upload icon small" title="Upload"></i>
 				<i class="download icon small" title="Download"></i>
-				<i class="file outline icon small" title="New File"></i>
-				<i class="folder open outline icon small" title="New Directory"></i>
 			</span>
 		</div>
 
 		{#if accordion.files}
-			<ul class="file-list">
-				{#each all_files as { name, files, content, type }}
-					{#if type === `folder`}
-						<Folder name={name} files={files} />
-					{:else}
-						<li>
-							<i class="icon yellow {name.match(/.json/) ? `node` : `js square`}"></i>
-							{name}
-						</li>
-					{/if}
-				{/each}
-			</ul>
+			<div class="file-list">
+				<Folder name="" files={all_files} expanded />
+			</div>
 		{/if}
 
 		<div class="title" data-title="cliargs" on:click={handleAccordionClick}>
@@ -133,7 +94,7 @@
 	</div>
 
 	<div class="pane-button">
-		<button class="ui button primary">
+		<button class="ui button">
 			<i class="icon github"></i>
 			Import Repo
 		</button>
@@ -144,20 +105,21 @@
 	.container {
 		padding: 0 5px 5px 5px;
 		min-height: 100vh;
-		min-width: 225px;
+		min-width: 275px;
 		background-color: #20262e;
 
-		.file-list {
-			margin: 5px 0 5px 15px;
-			padding: 0 0 0.2em 0;
+		.framework-selection {
+			margin: 7px 0 10px 0;
+			width: 100%;
 
-			li {
-				padding: 0.2em 0;
-
-				&:hover {
-					cursor: pointer;
-				}
+			i {
+				margin-left: 10px !important;
 			}
+		}
+
+		.file-list {
+			margin: -5px 0 0 0;
+			padding: 0;
 		}
 
 		.cliargs-list {

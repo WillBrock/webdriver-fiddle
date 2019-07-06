@@ -1,7 +1,7 @@
 
 <header>
 	<div>
-		<p>WebdriverIO Fiddle</p>
+		<p>WebDriver Fiddle</p>
 	</div>
 
 	<div class="run-button-container">
@@ -35,7 +35,7 @@
 		}
 
 		.run-button-container {
-			margin-left: 71px;
+			margin-left: 25px;
 		}
 
 		.right-container {

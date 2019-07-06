@@ -2,21 +2,48 @@
 	import File from './File.svelte';
 
 	export let expanded = false;
-	export let name;
-	export let files;
+	export let name, files, path;
+
+	const show_actions = {};
 
 	function toggle() {
 		expanded = !expanded;
 	}
+
+	function toggleActions(e) {
+		console.log(`hello`)
+		const name = e.target.dataset.name;
+		show_actions[name] = true;
+	}
 </script>
 
-<span on:click={toggle}>
-	<i class="icon folder outline {expanded ? `open` : ``}"></i>
-	{name}
-</span>
+{#if name}
+	<span
+		class="folder-container"
+		on:mouseover={e => show_actions[name] = true}
+		on:mouseout={e => show_actions[name] = false}
+		on:click={toggle}
+		data-name={name}
+		data-path={path}
+	>
+		<div>
+			<i class="icon folder {expanded ? `open` : ``}"></i>
+			{name}
+		</div>
+
+		{#if show_actions[name]}
+			<div class="action-icons">
+				<i class="icon edit outline" title="Edit Filename"></i>
+				<i class="icon file outline" title="New File"></i>
+				<i class="icon folder open outline" title="New Directory"></i>
+				<i class="icon close" title="Delete File"></i>
+			</div>
+		{/if}
+	</span>
+{/if}
 
 {#if expanded}
-	<ul>
+	<ul class="{!name ? `tree-trunk` : `tree-branch`}">
 		{#each files as file}
 			<li>
 				{#if file.type === `folder`}
@@ -30,11 +57,31 @@
 {/if}
 
 <style lang="scss">
-	span {
+	.folder-container {
+		display: flex;
 		cursor: pointer;
+		padding: 2px 0;
+
+		&:hover {
+			background-color: #2F3129;
+			opacity: .7;
+		}
 	}
 
-	ul {
+	.action-icons {
+		margin-left: auto;
+
+		i {
+			font-size: .9em;
+		}
+	}
+
+	ul.tree-trunk {
+		margin: 10px 0 5px 15px;
+		padding: 0 0 0.2em 0;
+	}
+
+	ul.tree-branch {
 		padding: 0.2em 0 0 0.5em;
 		margin: 0 0 0 0.5em;
 		list-style: none;
@@ -42,6 +89,6 @@
 	}
 
 	li {
-		padding: 0.2em 0;
+		padding: 0.3em 0;
 	}
 </style>

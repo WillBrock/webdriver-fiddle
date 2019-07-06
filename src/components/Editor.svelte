@@ -32,14 +32,20 @@ describe('Registration', () => {
 	});
 </script>
 
-<style>
+<style lang="scss">
+	.editor-container {
+		min-width: 700px;
+	}
+
 	#editor {
-		width: 2300px;
+		/*width: 2300px;*/
 		min-height: 100vh;
 		overflow-y: scroll;
 	}
 </style>
 
-<div id="editor">
-	{default_code}
+<div class="editor-container">
+	<div id="editor">
+		{default_code}
+	</div>
 </div>

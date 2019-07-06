@@ -1,10 +1,6 @@
 <script>
 	import Header from './components/Header.svelte';
-	import LeftPane from './components/LeftPane.svelte';
-	import Editor from './components/Editor.svelte';
-	import TestResults from './components/TestResults.svelte';
-
-	export let name;
+	import Home from './views/Home.svelte';
 </script>
 
 <style>
@@ -17,7 +13,5 @@
 
 <Header />
 <div class="flex-container">
-	<LeftPane />
-	<Editor />
-	<TestResults />
+	<Home />
 </div>
