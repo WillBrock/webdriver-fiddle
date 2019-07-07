@@ -4,14 +4,56 @@
 	import Editor      from '../components/Editor.svelte';
 	import TestResults from '../components/TestResults.svelte';
 
-	export let all_files = gql.request(`{ getTemplate }`);
+	const query = /* GraphQL */`
+		{
+			getTemplate {
+				tree,
+				flat {
+					path,
+					name,
+					content,
+					type,
+				}
+			}
+		}
+	`;
+
+	export let tree_data  = gql.request(query);
+	export let flat_data  = {
+		'./tests'           : {},
+		'./package.json'    : {},
+		'./wdio.conf.js'    : {
+			name : `wdio.conf.js`,
+			open : true,
+			icon : `js square`,
+		},
+		'./tests/test-1.js' : {
+			name   : `test-1.js`,
+			active : true,
+			open   : true,
+			icon : `js square`,
+		},
+		'./package.json' : {
+			name : `package.json`,
+			open : true,
+			icon : `npm`,
+		},
+	};
 
 </script>
 
-{#await all_files}
+{#await tree_data}
 	loading...
 {:then files}
-	<LeftPane all_files={JSON.parse(files.getTemplate)} />
-	<Editor all_files={JSON.parse(files.getTemplate)} />
+	<LeftPane
+		tree_data={JSON.parse(files.getTemplate.tree)}
+		flat_data={files.getTemplate.flat}
+	/>
+
+	<Editor
+		tree_data={JSON.parse(files.getTemplate.tree)}
+		flat_data={flat_data}
+	/>
+
 	<TestResults />
 {/await}

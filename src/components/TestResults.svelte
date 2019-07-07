@@ -31,7 +31,7 @@ Spec Files:      1 passed, 1 total (100% completed) in 00:00:07
 		color: #FFF;
 		min-height: 100vh;
 		overflow-y: scroll;
-		padding: 10px;
+		padding: 3px 10px;
 	}
 
 	.test-results-container p {

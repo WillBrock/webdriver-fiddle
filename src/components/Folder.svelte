@@ -9,12 +9,6 @@
 	function toggle() {
 		expanded = !expanded;
 	}
-
-	function toggleActions(e) {
-		console.log(`hello`)
-		const name = e.target.dataset.name;
-		show_actions[name] = true;
-	}
 </script>
 
 {#if name}
@@ -33,10 +27,10 @@
 
 		{#if show_actions[name]}
 			<div class="action-icons">
-				<i class="icon edit outline" title="Edit Filename"></i>
 				<i class="icon file outline" title="New File"></i>
 				<i class="icon folder open outline" title="New Directory"></i>
-				<i class="icon close" title="Delete File"></i>
+				<i class="icon pencil alternate" title="Edit Filename"></i>
+				<i class="icon close" title="Delete Directory"></i>
 			</div>
 		{/if}
 	</span>
@@ -89,6 +83,6 @@
 	}
 
 	li {
-		padding: 0.3em 0;
+		padding: 0.1em 0;
 	}
 </style>
