@@ -25,14 +25,12 @@
 			{name}
 		</div>
 
-		{#if show_actions[name]}
-			<div class="action-icons">
-				<i class="icon file outline" title="New File"></i>
-				<i class="icon folder open outline" title="New Directory"></i>
-				<i class="icon pencil alternate" title="Edit Filename"></i>
-				<i class="icon close" title="Delete Directory"></i>
-			</div>
-		{/if}
+		<div class="action-icons {show_actions[name] ? `` : `hidden`}">
+			<i class="icon file outline" title="New File"></i>
+			<i class="icon folder open outline" title="New Directory"></i>
+			<i class="icon pencil alternate" title="Edit Filename"></i>
+			<i class="icon close" title="Delete Directory"></i>
+		</div>
 	</span>
 {/if}
 

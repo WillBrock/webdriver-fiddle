@@ -2,7 +2,8 @@
 	import Folder from './Folder.svelte';
 	import File   from './File.svelte';
 
-	export let tree_data;
+	export let active_file = {};
+	export let tree = [];
 
 	const accordion = {
 		templates    : false,
@@ -64,7 +65,7 @@
 
 		{#if accordion.files}
 			<div class="file-list">
-				<Folder name="" files={tree_data} expanded />
+				<Folder name="" files={tree} expanded />
 			</div>
 		{/if}
 
@@ -105,7 +106,7 @@
 	.container {
 		padding: 0 5px 5px 5px;
 		min-height: 100vh;
-		min-width: 275px;
+		min-width: 250px;
 		background-color: #20262e;
 		border-right: 1px solid #2d333b;
 

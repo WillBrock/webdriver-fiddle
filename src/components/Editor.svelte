@@ -4,7 +4,9 @@
 	import 'ace-builds/src-min-noconflict/theme-chrome';
 	import 'ace-builds/src-min-noconflict/mode-javascript';
 
-	export let flat_data = {};
+	export let active_file = {}
+	export let tree = [];
+	export let flat = [];
 
 	const default_code = `import Register from './Register.page';
 
@@ -34,73 +36,13 @@ describe('Registration', () => {
 	});
 </script>
 
-<div class="editor-container">
-	<div class="tabs">
-		{#each Object.entries(flat_data) as [path, {name, icon, active, open, hover}]}
-			{#if open}
-				<div
-					class="tab {active ? `active` : ``}"
-					data-file={name}
-					on:mouseover={e => flat_data[path].hover = true}
-					on:mouseout={e => flat_data[path].hover = false}
-				>
-					<span>
-						<i class="icon yellow {icon}"></i>
-						{name}
-					</span>
-
-					<span class="close-x">
-						{#if hover}
-							<i class="icon close small"></i>
-						{/if}
-					</span>
-				</div>
-			{/if}
-		{/each}
-	</div>
-	<div id="editor">
-		{default_code}
-	</div>
+<div id="editor" data-path="{active_file.path}">
+	{default_code}
 </div>
 
 <style lang="scss">
-	.editor-container {
-		min-width: 900px;
-		border-right: 1px solid #2d333b;
-
-		.tabs {
-			display: flex;
-			background-color: #20262e;
-			position: relative;
-
-
-			.tab {
-				color: #8e9195;
-				min-width: 150px;
-				padding: 7px 7px;
-				border-right: 1px solid #2d333b;
-				text-align: center;
-				position: relative;
-
-				.close-x {
-					position: absolute;
-					right: 2;
-
-					i {
-						cursor: pointer;
-					}
-				}
-			}
-
-			.active {
-				background-color: #2d333b;
-				color: #FFF;
-			}
-		}
-
-		#editor {
-			min-height: 100vh;
-			overflow-y: scroll;
-		}
+	#editor {
+		min-height: 100vh;
+		overflow-y: scroll;
 	}
 </style>
