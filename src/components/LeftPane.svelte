@@ -152,6 +152,10 @@
 		font-size: 16px;
 		border-bottom: 1px solid #2d333b;
 		border-top: 1px solid #2d333b;
+
+		&:hover {
+			color: #8e9195;
+		}
 	}
 
 	.accordion .title:hover {

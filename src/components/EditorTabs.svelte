@@ -1,22 +1,34 @@
 <script>
-	import { files } from '../store';
+	import { onMount } from 'svelte';
+	import { files, active_file } from '../store';
 
 	let hover = null;
 
 	$: open_files = $files.filter((file) => file.open);
+
+	onMount(() => {
+
+	});
 
 	const handleClose = (e, path) => {
 		if(e.target.dataset.close === undefined) {
 			return;
 		}
 
-		files.closeFile(path);
+		files.updateFileState(path, { open : false });
 	}
 
 	const handleTabClick = (e, path) => {
 		if(e.target.dataset.close !== undefined) {
 			return;
 		}
+
+		files.removeActive();
+		//files.updateFileState($active_file.path, { active : false });
+		files.updateFileState(path, { active : true });
+
+		const editor = ace.edit("editor");
+		editor.setValue($active_file.content);
 	}
 </script>
 
@@ -24,7 +36,8 @@
 	<div class="tabs-container">
 		{#each open_files as { path, name, icon, active }}
 			<div
-				class="tab {active ? `active` : ``}"
+				class:active={active}
+				class="tab"
 				on:mouseover={() => hover = path}
 				on:mouseout={() => hover = null}
 				on:click={(e) => handleTabClick(e, path)}
@@ -40,7 +53,8 @@
 				>
 					<i
 						data-close
-						class="icon close small {hover === path ? `` : `hidden`}"
+						class:hidden={hover !== path}
+						class="icon close small"
 					></i>
 				</span>
 			</div>

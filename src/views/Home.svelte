@@ -6,6 +6,8 @@
 	import MiddlePane  from '../components/MiddlePane.svelte';
 	import TestResults from '../components/TestResults.svelte';
 
+	const CDN = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.5/src-min-noconflict';
+
 	const query = /* GraphQL */`
 		{
 			getTemplate
@@ -16,34 +18,24 @@
 
 	onMount(async() => {
 		const data = await gql.request(query);
-		tree = JSON.parse(data.getTemplate);
+		tree       = JSON.parse(data.getTemplate);
 
-		//files.setFiles(flattenTree(tree));
-		files.setFiles([
-			{
-				path : `./wdio.conf.js`,
-				name : `wdio.conf.js`,
-				open : true,
-				icon : `js square`,
-			},
-			{
-				path   : `./tests/test-1.js`,
-				name   : `test-1.js`,
-				active : true,
-				open   : true,
-				icon   : `js square`,
-			},
-			{
-				path : `./package.json`,
-				name : `package.json`,
-				open : true,
-				icon : `npm`,
-			},
-		]);
+		files.setFiles(flattenTree(tree));
 	});
 
-	function flattenTree(tree) {
+	// @todo many need to sort the tree by folders first
+	function flattenTree(tree, files = []) {
+		for(const branch of tree) {
+			const type = branch.type;
 
+			files.push(branch);
+
+			if(type === `folder`) {
+				flattenTree(branch.files, files);
+			}
+		}
+
+		return files;
 	}
 
 </script>
@@ -52,6 +44,6 @@
 	loading...
 {:else}
 	<LeftPane {tree} />
-	<MiddlePane />
+	<MiddlePane {CDN} />
 	<TestResults />
 {/if}

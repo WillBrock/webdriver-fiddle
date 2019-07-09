@@ -1,11 +1,13 @@
 <script>
 	import EditorTabs from './EditorTabs.svelte';
 	import Editor     from './Editor.svelte';
+
+	export let CDN;
 </script>
 
 <div class="editor-container">
 	<EditorTabs />
-	<Editor />
+	<Editor {CDN} />
 </div>
 
 <style lang="scss">

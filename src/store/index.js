@@ -1,24 +1,44 @@
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 
-function createFiles() {
+const createFiles = () => {
 	const { subscribe, set, update } = writable([]);
 
 	return {
 		subscribe,
-		setFiles    : files => set(files),
-		updateFiles : files => update(files),
-		closeFile : (path) => {
+		setFiles         : files => set(files),
+		updateFiles      : files => update(files),
+		removeActive     : () => {
+			update((files) => {
+				return files.map(file => {
+					file.active = false;
+					return file;
+				});
+			});
+		},
+		updateFileState  : (path, data) => {
 			update((files) => {
 				return files.map(file => {
 					if(file.path === path) {
-						file.open = false;
+						file = {...file, ...data};
 					}
 
 					return file;
 				});
 			});
-		}
-	}
+		},
+	};
 }
 
-export const files = createFiles();
+const internal_files = createFiles();
+
+export const active_file = derived(
+	internal_files,
+	files => files.find(file => file.active),
+);
+
+export const files = internal_files;
+
+
+const recentFiles = () => {
+
+}
