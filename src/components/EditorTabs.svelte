@@ -24,7 +24,6 @@
 		}
 
 		files.removeActive();
-		//files.updateFileState($active_file.path, { active : false });
 		files.updateFileState(path, { active : true });
 
 		const editor = ace.edit("editor");
@@ -75,6 +74,7 @@
 
 		.tabs-container {
 			display: flex;
+			overflow-x: auto;
 		}
 
 		.tab {

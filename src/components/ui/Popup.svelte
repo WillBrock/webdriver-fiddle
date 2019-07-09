@@ -1,19 +1,24 @@
 <script>
 	export let open = false;
 </script>
+
 <div
 	class:hidden={!open}
 	class="modal"
 >
-	<slot></slot>
+	<div class="header">
+		<slot name="header"></slot>
+	</div>
+
+	<div class="content">
+		<slot name="content"></slot>
+	</div>
 </div>
 
 <div
 	class:hidden={!open}
 	class="overlay"
->
-
-</div>
+></div>
 
 <style lang="scss">
 	.modal {
@@ -22,12 +27,27 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		background-color: #FFF;
-		width: 200px;
+		width: 500px;
 		max-width: 100%;
-		height: 200px;
 		max-height: 100%;
 		z-index: 1000;
 		border-radius: 5px;
+		color: #000;
+
+		.header {
+			padding: 15px 0 15px 15px;
+			color: #000;
+			font-weight: 700;
+			font-size: 1.6em;
+			font-family: Lato,Helvetica Neue,Arial,Helvetica,sans-serif;
+			line-height: 25px;
+			z-index: 1001;
+			border-bottom: 1px solid rgba(34,36,38,.15);
+		}
+
+		.content {
+			padding: 15px;
+		}
 	}
 
 	.overlay {

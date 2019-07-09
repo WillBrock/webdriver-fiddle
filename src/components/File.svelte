@@ -1,9 +1,10 @@
 <script>
 	import { files, active_file } from '../store';
-	import Popup                  from './Popup.svelte';
+	import Popup                  from './ui/Popup.svelte';
 
 	export let name, icon, path, type, content, open, active;
-	export let show_modal = false;
+	export let show_edit_modal   = false;
+	export let show_delete_modal = false;
 
 	const show_actions = {};
 
@@ -19,20 +20,70 @@
 		editor.setValue($active_file.content);
 	}
 
-	function editFile(e) {
+	function displayModal(e, action) {
 		if(e.target.dataset.path !== undefined) {
 			return;
 		}
 
-		show_modal = true;
+		if(action === `edit`) {
+			show_edit_modal = true;
+		}
+		else {
+			show_delete_modal = true;
+		}
+	}
+
+	function renameFile(path, name) {
+		files.updateFileState(path, { name });
+	}
+
+	function closeEditModal() {
+		show_edit_modal = false;
+	}
+
+	function closeDeleteModal(action) {
+		show_delete_modal = false;
 	}
 </script>
 
 <Popup
-	open={show_modal}
+	open={show_edit_modal}
 >
-	<div class="ui input small">
-		<input value={name} />
+	<div slot="header">
+		Rename File
+	</div>
+
+	<div slot="content">
+		<div class="ui input fluid">
+			<input
+				bind:value={name}
+				on:keyup={e => renameFile(path, name)}
+			/>
+		</div>
+
+		<div class="button-container">
+			<div><button on:click={closeEditModal} class="ui red button">Cancel</button></div>
+			<div><button on:click={closeEditModal} class="ui green button">Save</button></div>
+		</div>
+	</div>
+</Popup>
+
+<Popup
+	open={show_delete_modal}
+>
+	<div slot="header">
+		Delete File
+	</div>
+
+	<div slot="content">
+		<div>
+			Are you sure you want to delete {name}?
+		</div>
+
+		<div class="button-container">
+			<div><button on:click={e => closeDeleteModal(`cancel`)} class="ui red button">No</button></div>
+			<div><button on:click={e => closeDeleteModal(`save`)} class="ui green button">Yes</button></div>
+		</div>
 	</div>
 </Popup>
 
@@ -53,8 +104,8 @@
 		class:hidden={!show_actions[name]}
 		class="action-icons"
 	>
-		<i on:click={editFile} data-action class="icon pencil alternate" title="Edit Filename"></i>
-		<i data-action class="icon close" title="Delete Directory"></i>
+		<i on:click={e => displayModal(e, `edit`)} data-action class="icon pencil alternate" title="Edit Filename"></i>
+		<i on:click={e => displayModal(e, `delete`)} data-action class="icon close" title="Delete Directory"></i>
 	</div>
 </span>
 
@@ -76,5 +127,11 @@
 				font-size: .9em;
 			}
 		}
+	}
+
+	.button-container {
+		margin-top: 15px;
+		display: flex;
+		justify-content: flex-end;
 	}
 </style>
