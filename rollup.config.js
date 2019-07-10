@@ -2,6 +2,7 @@ import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
+import includePaths from 'rollup-plugin-includepaths';
 import { terser } from 'rollup-plugin-terser';
 import { scss } from 'svelte-preprocess';
 
@@ -27,6 +28,14 @@ export default {
 
 			preprocess : [scss()],
 		}),
+		/*
+		includePaths({
+			include    : {},
+			paths      : ['src'],
+			external   : [],
+			extensions : ['.js', '.json', '.svelte']
+		}),
+		*/
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In

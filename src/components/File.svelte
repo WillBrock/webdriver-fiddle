@@ -1,8 +1,9 @@
 <script>
 	import { files, active_file } from '../store';
 	import Popup                  from './ui/Popup.svelte';
+	import EditPopup              from '../views/Home/LeftPane/EditPopup.svelte';
 
-	export let name, icon, path, type, content, open, active;
+	export let name, icon, path, type, content, open, active, deleted;
 	export let show_edit_modal   = false;
 	export let show_delete_modal = false;
 
@@ -41,8 +42,18 @@
 		show_edit_modal = false;
 	}
 
-	function closeDeleteModal(action) {
+	function closeDeleteModal(delete_file = false) {
 		show_delete_modal = false;
+
+		if(!delete_file) {
+			return;
+		}
+
+		files.updateFileState(path, {
+			deleted : true,
+			active  : false,
+			open    : false,
+		});
 	}
 </script>
 
@@ -81,8 +92,8 @@
 		</div>
 
 		<div class="button-container">
-			<div><button on:click={e => closeDeleteModal(`cancel`)} class="ui red button">No</button></div>
-			<div><button on:click={e => closeDeleteModal(`save`)} class="ui green button">Yes</button></div>
+			<div><button on:click={e => closeDeleteModal()} class="ui red button">No</button></div>
+			<div><button on:click={e => closeDeleteModal(true)} class="ui green button">Yes</button></div>
 		</div>
 	</div>
 </Popup>

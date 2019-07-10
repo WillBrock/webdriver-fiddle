@@ -27,7 +27,7 @@
 		files.updateFileState(path, { active : true });
 
 		const editor = ace.edit("editor");
-		editor.setValue($active_file.content);
+		editor.setValue($active_file.content || ``);
 	}
 </script>
 

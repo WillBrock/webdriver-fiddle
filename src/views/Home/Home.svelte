@@ -1,10 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-	import { files }   from '../store';
-	import gql         from '../utils/request';
-	import LeftPane    from '../components/LeftPane.svelte';
-	import MiddlePane  from '../components/MiddlePane.svelte';
-	import TestResults from '../components/TestResults.svelte';
+	import { files }   from '../../store';
+	import gql         from '../../utils/request';
+	import LeftPane    from '../../components/LeftPane.svelte';
+	import MiddlePane  from '../../components/MiddlePane.svelte';
+	import TestResults from '../../components/TestResults.svelte';
 
 	const CDN = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.5/src-min-noconflict';
 

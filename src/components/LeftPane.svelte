@@ -1,8 +1,9 @@
 <script>
-	import Folder from './Folder.svelte';
-	import File   from './File.svelte';
+	import { files, active_file } from '../store';
+	import Popup     from './ui/Popup.svelte';
+	import Folder    from './Folder.svelte';
+	import File      from './File.svelte';
 
-	export let active_file = {};
 	export let tree = [];
 
 	const accordion = {
@@ -11,6 +12,9 @@
 		dependencies : false,
 		cliargs      : false,
 	};
+
+	const display_modal = {};
+	let new_name = null;
 
 	const templates = [
 		{
@@ -31,7 +35,95 @@
 		const title = e.target.dataset.title;
 		accordion[title] = !accordion[title];
 	}
+
+	function displayModal(e, action) {
+		if(e.target.dataset.action === undefined) {
+			return;
+		}
+
+		new_name = null;
+		display_modal[action] = true;
+	}
+
+	// Add a file or folder
+	function addFile(e, type = `file`) {
+		if(!new_name) {
+			return;
+		}
+
+		const folder    = type !== `file`;
+		const file_path = new_name;
+
+		const new_files = [...$files, {
+			path   : file_path,
+			open   : !folder,
+			active : !folder,
+			name   : new_name,
+			// @todo make dynamic icon
+			icon   : !folder ? `js square` : ``,
+			type,
+		}];
+
+		if(!folder) {
+			files.removeActive();
+		}
+
+		files.setFiles(new_files);
+
+		if(!folder) {
+			const editor = ace.edit("editor");
+			editor.setValue($active_file.content || ``);
+		}
+
+		display_modal[type] = false;
+	}
 </script>
+
+<Popup
+	open={display_modal.file}
+>
+	<div slot="header">
+		New File
+	</div>
+
+	<div slot="content">
+		<form on:submit|preventDefault={addFile}>
+			<div class="ui input fluid">
+				<input
+					bind:value={new_name}
+					on:keyup={e => new_name = e.target.value}
+				/>
+			</div>
+
+			<div class="button-container">
+				<div><button class="ui green button">Add</button></div>
+			</div>
+		</form>
+	</div>
+</Popup>
+
+<Popup
+	open={display_modal.folder}
+>
+	<div slot="header">
+		New Folder
+	</div>
+
+	<div slot="content">
+		<form on:submit|preventDefault={e => addFile(e, `folder`)}>
+			<div class="ui input fluid">
+				<input
+					bind:value={new_name}
+					on:keyup={e => new_name = e.target.value}
+				/>
+			</div>
+
+			<div class="button-container">
+				<div><button class="ui green button">Add</button></div>
+			</div>
+		</form>
+	</div>
+</Popup>
 
 <div class="container">
 	<button class="ui button small framework-selection">
@@ -58,8 +150,8 @@
 			Files
 
 			<span class="icon-container">
-				<i class="upload icon small" title="Upload"></i>
-				<i class="download icon small" title="Download"></i>
+				<i data-action on:click={e => displayModal(e, `file`)} class="icon file outline" title="New File"></i>
+				<i data-action on:click={e => displayModal(e, `folder`)} class="icon folder open outline" title="New Directory"></i>
 			</span>
 		</div>
 
@@ -124,6 +216,12 @@
 			padding: 0;
 		}
 
+		.icon-container {
+			i {
+				font-size: .9em;
+			}
+		}
+
 		.cliargs-list {
 			margin: 5px 0 5px 10px;
 			padding: 5px 0 0 0;
@@ -181,5 +279,11 @@
 	.icon-container {
 		float: right;
 		margin-right: 5px;
+	}
+
+	.button-container {
+		margin-top: 15px;
+		display: flex;
+		justify-content: flex-end;
 	}
 </style>

@@ -1,6 +1,6 @@
 <script>
 	import Header from './components/Header.svelte';
-	import Home from './views/Home.svelte';
+	import Home from './views/Home/Home.svelte';
 </script>
 
 <style>
