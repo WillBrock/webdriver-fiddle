@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { files, active_file }   from '../store';
+	import { files, active_file }   from '../../../store';
 	import 'ace-builds/src-min-noconflict/ace';
 	import 'ace-builds/src-min-noconflict/theme-chrome';
 	import 'ace-builds/src-min-noconflict/mode-javascript';
@@ -21,7 +21,7 @@
 		editor.setShowPrintMargin(false);
 		editor.setFontSize(`17px`);
 
-		editor.setValue($active_file.content);
+		editor.setValue($active_file.content, -1);
 	});
 </script>
 

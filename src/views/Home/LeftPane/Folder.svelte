@@ -1,10 +1,10 @@
 <script>
-	import Popup from './ui/Popup.svelte';
+	import Popup from '../../../components/ui/Popup.svelte';
 	import File  from './File.svelte';
-	import { files as store_files, active_file } from '../store';
+	import { files as store_files, active_file } from '../../../store';
 
 	export let expanded = false;
-	export let name, files, path, deleted;
+	export let name, files, icon, path, deleted;
 
 	let new_name        = null;
 	const show_actions  = {};
@@ -74,7 +74,7 @@
 
 		if(!folder) {
 			const editor = ace.edit("editor");
-			editor.setValue($active_file.content || ``);
+			editor.setValue($active_file.content || ``, -1);
 		}
 
 		display_modal[type] = false;
@@ -196,7 +196,7 @@
 	<ul class="{!name ? `tree-trunk` : `tree-branch`}">
 		{#each files as file}
 			<li>
-				{#if file.type === `folder`}
+				{#if file.type === `directory`}
 					<svelte:self {...file} />
 				{:else}
 					<File {...file} />
@@ -223,6 +223,11 @@
 
 		i {
 			font-size: .9em;
+
+			&:hover {
+				color: #FFF !important;
+				font-weight: bold;
+			}
 		}
 	}
 

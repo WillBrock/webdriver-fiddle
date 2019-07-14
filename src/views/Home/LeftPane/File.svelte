@@ -1,9 +1,9 @@
 <script>
-	import { files, active_file } from '../store';
-	import Popup                  from './ui/Popup.svelte';
-	import EditPopup              from '../views/Home/LeftPane/EditPopup.svelte';
+	import { files, active_file } from '../../../store';
+	import Popup                  from '../../../components/ui/Popup.svelte';
+	import EditPopup              from './EditPopup.svelte';
 
-	export let name, icon, path, type, content, open, active, deleted;
+	export let name, icon, path, type, open, active, deleted;
 	export let show_edit_modal   = false;
 	export let show_delete_modal = false;
 
@@ -18,7 +18,7 @@
 		files.updateFileState(path, { active : true, open : true });
 
 		const editor = ace.edit("editor");
-		editor.setValue($active_file.content);
+		editor.setValue($active_file.content, -1);
 	}
 
 	function displayModal(e, action) {
@@ -136,6 +136,11 @@
 
 			i {
 				font-size: .9em;
+
+				&:hover {
+					color: #FFF !important;
+					font-weight: bold;
+				}
 			}
 		}
 	}

@@ -16,6 +16,7 @@
 </div>
 
 <div
+	on:click={() => open = false}
 	class:hidden={!open}
 	class="overlay"
 ></div>

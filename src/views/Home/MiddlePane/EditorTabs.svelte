@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { files, active_file } from '../store';
+	import { files, active_file } from '../../../store';
 
 	let hover = null;
 
@@ -27,7 +27,7 @@
 		files.updateFileState(path, { active : true });
 
 		const editor = ace.edit("editor");
-		editor.setValue($active_file.content || ``);
+		editor.setValue($active_file.content || ``, -1);
 	}
 </script>
 

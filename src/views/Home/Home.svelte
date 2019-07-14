@@ -2,27 +2,77 @@
 	import { onMount } from 'svelte';
 	import { files }   from '../../store';
 	import gql         from '../../utils/request';
-	import LeftPane    from '../../components/LeftPane.svelte';
-	import MiddlePane  from '../../components/MiddlePane.svelte';
-	import TestResults from '../../components/TestResults.svelte';
+	import LeftPane    from './LeftPane/index.svelte';
+	import MiddlePane  from './MiddlePane/index.svelte';
+	import TestResults from './RightPane/index.svelte';
 
 	const CDN = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.5/src-min-noconflict';
 
 	const query = /* GraphQL */`
 		{
-			getTemplate
+			getTemplate {
+				path,
+				name,
+				content,
+				type,
+				extension,
+				icon,
+				active,
+				open,
+			}
 		}
 	`;
 
-	let tree = [];
+	$: tree = convertToHierarchy($files).files;
 
 	onMount(async() => {
 		const data = await gql.request(query);
-		tree       = JSON.parse(data.getTemplate);
+		const flat = data.getTemplate;
+		console.log(flat, `the flat..`);
 
-		files.setFiles(flattenTree(tree));
+		files.setFiles(flat);
 	});
 
+	function convertToHierarchy(paths) {
+		// Build the node structure
+		const root_node = { name : `root`, files : [] };
+
+		paths.sort();
+
+		for(let item of paths) {
+			buildNodeRecursive(root_node, item.path.split('/'), 0, item);
+		}
+
+		return root_node;
+	}
+
+	function buildNodeRecursive(node, path, idx, main_item) {
+		if(idx < path.length) {
+			const item = path[idx];
+
+			node.files.sort((a, b) => b.files.length > a.files.length);
+
+			let directory = node.files.find(child => child.name == item);
+
+			if(!directory) {
+				node.files.push(directory = {
+					name      : item,
+					type      : `file`,
+					path      : main_item.path,
+					extension : main_item.extension,
+					icon      : main_item.icon,
+					files     : [],
+				});
+			}
+			else {
+				directory.type = `directory`;
+			}
+
+			buildNodeRecursive(directory, path, idx + 1, main_item);
+		}
+	}
+
+	/*
 	// @todo many need to sort the tree by folders first
 	function flattenTree(tree, files = []) {
 		for(const branch of tree) {
@@ -37,6 +87,7 @@
 
 		return files;
 	}
+	*/
 
 </script>
 
