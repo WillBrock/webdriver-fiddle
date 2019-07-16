@@ -1,14 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
-	import { files, active_file } from '../../../store';
+	import {
+		files,
+		active_file,
+		editor_sessions,
+		editor,
+	} from '../../../store';
 
 	let hover = null;
 
 	$: open_files = $files.filter((file) => file.open);
-
-	onMount(() => {
-
-	});
 
 	const handleClose = (e, path) => {
 		if(e.target.dataset.close === undefined) {
@@ -16,6 +17,8 @@
 		}
 
 		files.updateFileState(path, { open : false });
+
+		editor_sessions.remove(path);
 	}
 
 	const handleTabClick = (e, path) => {
@@ -26,8 +29,7 @@
 		files.removeActive();
 		files.updateFileState(path, { active : true });
 
-		const editor = ace.edit("editor");
-		editor.setValue($active_file.content || ``, -1);
+		$editor.setSession($editor_sessions[path]);
 	}
 </script>
 

@@ -1,15 +1,10 @@
 <script>
-	import { onMount } from 'svelte';
 	import { files, active_file } from '../../../store';
-	import Popup     from '../../../components/ui/Popup.svelte';
-	import Folder    from './Folder.svelte';
-	import File      from './File.svelte';
+	import Popup                  from '../../../components/ui/Popup.svelte';
+	import Folder                 from './Folder.svelte';
+	import File                   from './File.svelte';
 
 	export let tree = [];
-
-	onMount(() => {
-		console.log(tree, `tree..`)
-	});
 
 	const accordion = {
 		templates    : false,
@@ -19,7 +14,7 @@
 	};
 
 	const display_modal = {};
-	let new_name = null;
+	let new_name        = null;
 
 	const templates = [
 		{
@@ -79,8 +74,8 @@
 		files.setFiles(new_files);
 
 		if(!folder) {
-			const editor = ace.edit("editor");
-			editor.setValue($active_file.content || ``, -1);
+			//const editor = ace.edit("editor");
+			//editor.setValue($active_file.content || ``, -1);
 		}
 
 		display_modal[type] = false;

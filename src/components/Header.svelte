@@ -9,6 +9,17 @@
 			<i class="icon play"></i>
 			Run
 		</button>
+
+		<button class="ui button primary small">
+			<i class="icon save"></i>
+			Save
+		</button>
+
+		<!-- If viewing another persons repo, instead of save you can fork -->
+		<button class="ui button primary small">
+			<i class="icon random"></i>
+			Fork
+		</button>
 	</div>
 
 	<div class="right-container">
@@ -36,6 +47,10 @@
 
 		.run-button-container {
 			margin-left: 25px;
+
+			button {
+				margin-right: 7px;
+			}
 		}
 
 		.right-container {

@@ -9,16 +9,9 @@
 	const CDN = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.5/src-min-noconflict';
 
 	const query = /* GraphQL */`
-		{
-			getTemplate {
-				path,
-				name,
-				content,
-				type,
-				extension,
-				icon,
-				active,
-				open,
+		query getData($repo: String, $framework: String, $template: String) {
+			getRepo(repo: $repo, framework: $framework, template: $template) {
+				path, name, content, type, extension, icon, active, open,
 			}
 		}
 	`;
@@ -26,12 +19,22 @@
 	$: tree = convertToHierarchy($files).files;
 
 	onMount(async() => {
-		const data = await gql.request(query);
-		const flat = data.getTemplate;
-		console.log(flat, `the flat..`);
+		const variables = {};
+		const route     = window.location.pathname.slice(1);
+
+		if(route) {
+			variables.repo = route;
+		}
+
+		const data  = await gql.request(query, variables);
+		const flat  = data.getRepo;
 
 		files.setFiles(flat);
 	});
+
+	function getTemplate() {
+
+	}
 
 	function convertToHierarchy(paths) {
 		// Build the node structure
@@ -72,29 +75,12 @@
 		}
 	}
 
-	/*
-	// @todo many need to sort the tree by folders first
-	function flattenTree(tree, files = []) {
-		for(const branch of tree) {
-			const type = branch.type;
-
-			files.push(branch);
-
-			if(type === `folder`) {
-				flattenTree(branch.files, files);
-			}
-		}
-
-		return files;
-	}
-	*/
-
 </script>
 
 {#if !tree.length}
 	loading...
 {:else}
-	<LeftPane {tree} />
+	<LeftPane {tree} {getTemplate} />
 	<MiddlePane {CDN} />
 	<TestResults />
 {/if}

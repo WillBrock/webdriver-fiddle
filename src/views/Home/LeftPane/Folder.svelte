@@ -9,6 +9,7 @@
 	let new_name        = null;
 	const show_actions  = {};
 	const display_modal = {};
+	const foo_bar = false;
 
 	function toggle(e) {
 		if(e.target.dataset.action !== undefined) {
@@ -27,8 +28,8 @@
 		display_modal[action] = true;
 	}
 
-	function renameFolder(path, name) {
-		store_files.updateFileState(path, { name });
+	function renameFolder(e, path) {
+		store_files.updateFileState(path, { name : e.target.value });
 	}
 
 	// Delete the folder
@@ -138,8 +139,8 @@
 		<form on:submit|preventDefault={() => display_modal.edit = false}>
 			<div class="ui input fluid">
 				<input
-					bind:value={name}
-					on:keyup={e => renameFolder(path, name)}
+					value={name}
+					on:keyup={e => renameFolder(e, path)}
 				/>
 			</div>
 

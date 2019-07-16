@@ -1,11 +1,18 @@
 <script>
-	import { files, active_file } from '../../../store';
-	import Popup                  from '../../../components/ui/Popup.svelte';
-	import EditPopup              from './EditPopup.svelte';
+	import {
+		files,
+		active_file,
+		editor_sessions,
+		editor,
+	} from '../../../store';
+	import Popup     from '../../../components/ui/Popup.svelte';
+	import EditPopup from './EditPopup.svelte';
 
 	export let name, icon, path, type, open, active, deleted;
 	export let show_edit_modal   = false;
 	export let show_delete_modal = false;
+
+	$: console.log($editor_sessions, `foobar`);
 
 	const show_actions = {};
 
@@ -17,8 +24,12 @@
 		files.removeActive();
 		files.updateFileState(path, { active : true, open : true });
 
-		const editor = ace.edit("editor");
-		editor.setValue($active_file.content, -1);
+		const EditSession = ace.require(`ace/edit_session`).EditSession;
+
+		if(!$editor_sessions[path]) {
+			editor_sessions.add(path, ace.createEditSession($active_file.content, `ace/mode/javascript`));
+			$editor.setSession($editor_sessions[path]);
+		}
 	}
 
 	function displayModal(e, action) {
@@ -34,8 +45,9 @@
 		}
 	}
 
-	function renameFile(path, name) {
-		files.updateFileState(path, { name });
+	function renameFile(e, path) {
+		const value = e.target.value;
+		files.updateFileState(path, { name : value });
 	}
 
 	function closeEditModal() {
@@ -67,8 +79,8 @@
 	<div slot="content">
 		<div class="ui input fluid">
 			<input
-				bind:value={name}
-				on:keyup={e => renameFile(path, name)}
+				value={name}
+				on:keyup={e => renameFile(e, path)}
 			/>
 		</div>
 
