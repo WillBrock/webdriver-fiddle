@@ -11,6 +11,7 @@
 	import 'ace-builds/src-min-noconflict/mode-javascript';
 
 	export let CDN = null;
+	export let saveChanges;
 
 	onMount(() => {
 		// Now we tell ace to use the CDN locations to look for files
@@ -30,9 +31,22 @@
 		editor_sessions.add($active_file.path, ace.createEditSession($active_file.content, `ace/mode/javascript`));
 		$editor.setSession($editor_sessions[$active_file.path]);
 	});
+
+	function checkSaving(e) {
+		if((e.ctrlKey || e.metaKey) && e.which === 83) {
+			e.preventDefault();
+
+			saveChanges();
+		}
+	}
 </script>
 
-<div id="editor"></div>
+<div
+	id="editor"
+	on:keydown={checkSaving}
+>
+
+</div>
 
 <style lang="scss">
 	#editor {

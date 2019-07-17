@@ -6,12 +6,23 @@
 	import MiddlePane  from './MiddlePane/index.svelte';
 	import TestResults from './RightPane/index.svelte';
 
+	export let saveChanges;
+
 	const CDN = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.5/src-min-noconflict';
 
 	const query = /* GraphQL */`
 		query getData($repo: String, $framework: String, $template: String) {
 			getRepo(repo: $repo, framework: $framework, template: $template) {
-				path, name, content, type, extension, icon, active, open,
+				original_name,
+				original_path,
+				path,
+				name,
+				content,
+				type,
+				extension,
+				icon,
+				active,
+				open,
 			}
 		}
 	`;
@@ -81,6 +92,6 @@
 	loading...
 {:else}
 	<LeftPane {tree} {getTemplate} />
-	<MiddlePane {CDN} />
+	<MiddlePane {CDN} {saveChanges} />
 	<TestResults />
 {/if}

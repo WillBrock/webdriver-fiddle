@@ -3,11 +3,13 @@
 	import Editor     from './Editor.svelte';
 
 	export let CDN;
+	export let saving;
+	export let saveChanges;
 </script>
 
 <div class="editor-container">
 	<EditorTabs />
-	<Editor {CDN} />
+	<Editor {CDN} {saveChanges} {saving} />
 </div>
 
 <style lang="scss">

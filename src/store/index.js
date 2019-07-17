@@ -7,6 +7,13 @@ const createFiles = () => {
 		subscribe,
 		setFiles         : files => set(files),
 		updateFiles      : files => update(files),
+		addFile          : (data) => {
+			update((files) => {
+				files = files.push(data);
+
+				return files;
+			});
+		},
 		removeActive     : () => {
 			update((files) => {
 				return files.map(file => {
@@ -18,17 +25,17 @@ const createFiles = () => {
 		updateFileState  : (path, data) => {
 			update((files) => {
 				return files.map(file => {
-					// @todo maybe mark the file as changed here
-					if(file.path === path) {
-						file.updated = true;
-
-						//console.log(file, data)
-						if(data.name) {
-							file.path = file.path.replace(file.name, data.name)
-						}
-
-						file = {...file, ...data};
+					if(file.path !== path) {
+						return file;
 					}
+
+					file.updated = true;
+
+					if(data.name) {
+						file.path = file.path.replace(file.name, data.name)
+					}
+
+					file = {...file, ...data};
 
 					return file;
 				});

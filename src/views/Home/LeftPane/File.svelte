@@ -5,14 +5,13 @@
 		editor_sessions,
 		editor,
 	} from '../../../store';
-	import Popup     from '../../../components/ui/Popup.svelte';
-	import EditPopup from './EditPopup.svelte';
+	import Popup         from '../../../components/ui/Popup.svelte';
+	import EditPopup     from './EditPopup.svelte';
+	import getEditorMode from '../../../helpers/getEditorMode';
 
 	export let name, icon, path, type, open, active, deleted;
 	export let show_edit_modal   = false;
 	export let show_delete_modal = false;
-
-	$: console.log($editor_sessions, `foobar`);
 
 	const show_actions = {};
 
@@ -24,12 +23,14 @@
 		files.removeActive();
 		files.updateFileState(path, { active : true, open : true });
 
-		const EditSession = ace.require(`ace/edit_session`).EditSession;
-
 		if(!$editor_sessions[path]) {
-			editor_sessions.add(path, ace.createEditSession($active_file.content, `ace/mode/javascript`));
-			$editor.setSession($editor_sessions[path]);
+			const EditSession = ace.require(`ace/edit_session`).EditSession;
+			const editor_mode = getEditorMode($active_file.extension);
+
+			editor_sessions.add(path, ace.createEditSession($active_file.content, editor_mode));
 		}
+
+		$editor.setSession($editor_sessions[path]);
 	}
 
 	function displayModal(e, action) {
