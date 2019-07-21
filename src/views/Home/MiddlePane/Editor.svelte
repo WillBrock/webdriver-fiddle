@@ -6,6 +6,7 @@
 		editor_sessions
 	} from '../../../store';
 	import { onMount } from 'svelte';
+	import getEditorMode from '../../../helpers/getEditorMode';
 	import 'ace-builds/src-min-noconflict/ace';
 	import 'ace-builds/src-min-noconflict/theme-chrome';
 	import 'ace-builds/src-min-noconflict/mode-javascript';
@@ -22,13 +23,16 @@
 
 		const init_editor = ace.edit("editor");
 		init_editor.setTheme("ace/theme/monokai");
-		//init_editor.session.setMode("ace/mode/javascript");
 		init_editor.setShowPrintMargin(false);
 		init_editor.setFontSize(`17px`);
 
 		editor.set(init_editor);
-		// @todo make the mode dynamic based on file type
-		editor_sessions.add($active_file.path, ace.createEditSession($active_file.content, `ace/mode/javascript`));
+
+		$files.filter(file => file.open).forEach(file => {
+			const editor_mode = getEditorMode(file.extension);
+			editor_sessions.add(file.path, ace.createEditSession(file.content, editor_mode));
+		});
+
 		$editor.setSession($editor_sessions[$active_file.path]);
 	});
 

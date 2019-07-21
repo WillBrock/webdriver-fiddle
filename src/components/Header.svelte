@@ -1,11 +1,44 @@
 <script>
 	import {
 		files,
-		editor_sessions
+		editor_sessions,
+		terminal,
 	} from '../store';
+	import gql from '../utils/request';
 
 	export let saving = false;
 	export let saveChanges;
+
+	const socket_path = `ws://localhost:4000/foo`;
+
+	async function runTests() {
+		await saveChanges();
+
+		const repo = window.location.pathname.slice(1);
+
+		if(!repo) {
+			throw new Error(`No repo specified in runTests()`);
+		}
+
+		console.log(`it triggered`, repo);
+
+		const socket = new WebSocket(socket_path);
+
+		socket.on(`message`, (data) => {
+			console.log(`from message`, data);
+		});
+
+		const query = `
+			query RunTests($repo: String) {
+				runTests(repo: $repo)
+			}
+		`;
+
+		await gql.request(query, { repo });
+
+		// Results will be streamed real time to the terminal console that was setup
+		// All the above needs to do is trigger the job AKA kind of like a jenkins job
+	}
 </script>
 
 <header>
@@ -14,7 +47,10 @@
 	</div>
 
 	<div class="run-button-container">
-		<button class="ui button primary small">
+		<button
+			on:click={runTests}
+			class="ui button primary small"
+		>
 			<i class="icon play"></i>
 			Run
 		</button>

@@ -60,11 +60,14 @@
 		saving = true;
 
 		const fresh_files = await gql.request(query, variables);
-		files.setFiles(fresh_files);
+		files.setFiles(fresh_files.saveFiles.files);
 
 		saving = false;
 
 		// Check if this was a new repo, if so update the url with the repo id
+		if(!repo) {
+			history.pushState({}, null, fresh_files.saveFiles.repo);
+		}
 	}
 </script>
 

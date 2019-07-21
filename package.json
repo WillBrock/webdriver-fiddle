@@ -16,7 +16,10 @@
     "rollup-plugin-terser": "^4.0.4",
     "sass": "^1.22.3",
     "svelte": "^3.0.0",
-    "svelte-preprocess": "^2.14.3"
+    "svelte-preprocess": "^2.14.3",
+    "xterm": "^3.14.5",
+    "xterm-addon-attach": "^0.1.0",
+    "xterm-addon-fit": "^0.1.0"
   },
   "dependencies": {
     "sirv-cli": "^0.4.4"

@@ -92,6 +92,17 @@ function editorSessions() {
 
 export const editor_sessions = editorSessions();
 
+function _terminal() {
+	const { subscribe, set } = writable();
+
+	return {
+		subscribe,
+		setTerminal : (terminal) => set(terminal),
+	};
+}
+
+export const terminal = _terminal();
+
 /*
 const recentFiles = () => {
 

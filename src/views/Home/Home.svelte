@@ -23,6 +23,7 @@
 				icon,
 				active,
 				open,
+				updated,
 			}
 		}
 	`;
@@ -40,6 +41,7 @@
 		const data  = await gql.request(query, variables);
 		const flat  = data.getRepo;
 
+		console.log(flat, `flat..`)
 		files.setFiles(flat);
 	});
 
