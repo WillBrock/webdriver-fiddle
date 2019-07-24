@@ -1,10 +1,23 @@
 <script>
-	import { files, editor_sessions } from './store';
+	import { onMount, onDestroy } from 'svelte';
+	import { files, editor_sessions, results_socket } from './store';
 	import gql    from './utils/request';
 	import Header from './components/Header.svelte';
 	import Home   from './views/Home/Home.svelte';
 
 	let saving = false;
+
+	onMount(() => {
+		const socket_path = `ws://localhost:12333`;
+		const socket      = new WebSocket(socket_path);
+
+		results_socket.setSocket(socket);
+	});
+
+	onDestroy(() => {
+		results_socket.close();
+		results_socket.setSocket(null);
+	});
 
 	async function saveChanges() {
 		const repo = window.location.pathname.slice(1) || ``;
@@ -73,9 +86,12 @@
 
 <style>
 	.flex-container {
+		position: absolute;
+		top: 50px;
+		bottom: 0;
+		width: 100%;
 		display: flex;
 		align-content: stretch;
-		position: relative;
 	}
 </style>
 

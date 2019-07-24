@@ -14,7 +14,7 @@
 
 <style lang="scss">
 	.editor-container {
-		min-width: 900px;
+		flex: 1;
 		border-right: 1px solid #2d333b;
 	}
 </style>

@@ -2,14 +2,15 @@
 	import {
 		files,
 		editor_sessions,
-		terminal,
+		results_socket,
 	} from '../store';
 	import gql from '../utils/request';
+	import * as attach  from 'xterm/lib/addons/attach/attach';
+	import * as fit     from 'xterm/lib/addons/fit/fit';
+	import { Terminal } from 'xterm';
 
 	export let saving = false;
 	export let saveChanges;
-
-	const socket_path = `ws://localhost:4000/foo`;
 
 	async function runTests() {
 		await saveChanges();
@@ -20,24 +21,28 @@
 			throw new Error(`No repo specified in runTests()`);
 		}
 
-		console.log(`it triggered`, repo);
+		const container = document.querySelector(`.test-results-container`);
 
-		const socket = new WebSocket(socket_path);
+		Terminal.applyAddon(fit);
+		Terminal.applyAddon(attach);
 
-		socket.on(`message`, (data) => {
-			console.log(`from message`, data);
+		const term = new Terminal({
+		//	cols       : 100,
+			convertEol : true,
+			useStyle   : true,
 		});
 
-		const query = `
-			query RunTests($repo: String) {
-				runTests(repo: $repo)
-			}
-		`;
+		term.open(container);
+		term.fit();
 
-		await gql.request(query, { repo });
+		term.attach($results_socket, true, true);
 
-		// Results will be streamed real time to the terminal console that was setup
-		// All the above needs to do is trigger the job AKA kind of like a jenkins job
+		console.log(repo, `repo..`)
+
+		$results_socket.send(JSON.stringify({
+			action : `run-tests`,
+			repo,
+		}));
 	}
 </script>
 
@@ -64,6 +69,11 @@
 			Save
 		</button>
 
+		<button class="ui button primary small">
+			<i class="icon download"></i>
+			Download
+		</button>
+
 		<!-- If viewing another persons repo, instead of save you can fork -->
 		<!--
 		<button class="ui button primary small">
@@ -72,21 +82,18 @@
 		</button>
 		-->
 	</div>
-
-	<div class="right-container">
-		<button class="ui button primary small">
-			<i class="icon share alternate"></i>
-			Share
-		</button>
-	</div>
 </header>
 
 <style lang="scss">
 	header {
+		position: absolute;
 		display: flex;
+		top: 0;
+		left: 0;
 		align-items: center;
 		padding: 0 10px;
 		height : 50px;
+		width: 100%;
 		background-color: #1c2128;
 		border-bottom : 1px solid rgb(17, 21, 24);
 
@@ -102,10 +109,6 @@
 			button {
 				margin-right: 7px;
 			}
-		}
-
-		.right-container {
-			margin-left: auto;
 		}
 	}
 </style>

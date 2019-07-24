@@ -103,6 +103,17 @@ function _terminal() {
 
 export const terminal = _terminal();
 
+function _resultsSocket() {
+	const { subscribe, set } = writable();
+
+	return {
+		subscribe,
+		setSocket : (socket) => set(socket),
+	}
+}
+
+export const results_socket = _resultsSocket();
+
 /*
 const recentFiles = () => {
 

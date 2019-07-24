@@ -200,8 +200,7 @@
 <style lang="scss">
 	.container {
 		padding: 0 5px 5px 5px;
-		min-height: 100vh;
-		min-width: 250px;
+		flex: 0 0 250px;
 		background-color: #20262e;
 		border-right: 1px solid #2d333b;
 

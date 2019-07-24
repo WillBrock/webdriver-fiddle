@@ -54,7 +54,10 @@
 
 <style lang="scss">
 	#editor {
-		min-height: 100vh;
+		height: calc(100vh - 83px);
+		position: relative;
+		top: 0;
+		bottom: 5px;
 		overflow-y: scroll;
 	}
 </style>
