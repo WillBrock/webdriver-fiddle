@@ -1,10 +1,23 @@
 <script>
+	import { onMount }            from 'svelte';
 	import { files, active_file } from '../../../store';
+	import gql                    from '../../../utils/request';
 	import Popup                  from '../../../components/ui/Popup.svelte';
 	import Folder                 from './Folder.svelte';
 	import File                   from './File.svelte';
+	import ImportRepo             from './ImportRepo.svelte';
+	import AddDependency          from './AddDependency.svelte';
+	import History                from './History.svelte';
 
-	export let tree = [];
+	export let getTemplate, getRepo;
+	export let tree               = [];
+	export let frameworks         = [];
+	export let active_framework   = `webdriverio`;
+	export let repo_url           = null;
+	export let history            = [];
+	export let added_dependencies = [];
+
+	const PACKAGE_PATH = `package.json`;
 
 	const accordion = {
 		templates    : false,
@@ -16,20 +29,49 @@
 	const display_modal = {};
 	let new_name        = null;
 
-	const templates = [
-		{
-			title : `Mocha and Chai`,
-			key   : `mocha`,
-		},
-		{
-			title : `Jasmine`,
-			key   : `jasmine`,
-		},
-		{
-			title : `Cucumber`,
-			key   : `cucumber`,
-		},
-	];
+	const templates = {
+		webdriverio : [
+			{
+				title : `Mocha and Chai`,
+				key   : `mocha`,
+			},
+			{
+				title : `Jasmine`,
+				key   : `jasmine`,
+			},
+			{
+				title : `Cucumber`,
+				key   : `cucumber`,
+			},
+		],
+		python : [
+			{
+				title : `Mocha and Chai`,
+				key   : `mocha`,
+			},
+		],
+	};
+
+	onMount(async () => {
+		const query = `
+			query GetHistory($user: Int) {
+				getHistory(user: $user)
+			}
+		`;
+
+		history = (await gql.request(query, { user : 123 })).getHistory;
+
+		const package_file = $files.find(file => file.path === PACKAGE_PATH);
+		const content      = JSON.parse(package_file.content);
+		const dependencies = content.devDependencies;
+
+		for(const [ title, version ] of Object.entries(dependencies)) {
+			added_dependencies.push({
+				title,
+				version,
+			});
+		}
+	});
 
 	function handleAccordionClick(e) {
 		const title = e.target.dataset.title;
@@ -41,8 +83,7 @@
 			return;
 		}
 
-		display_modal.folder = false;
-		display_modal.file   = false;
+		clearModals();
 
 		new_name = null;
 		display_modal[action] = true;
@@ -79,6 +120,32 @@
 		}
 
 		display_modal[type] = false;
+	}
+
+	function clearModals() {
+		for(const type in display_modal) {
+			display_modal[type] = false;
+		}
+	}
+
+	async function importRepo() {
+		console.log(`importRepo`, repo_url);
+
+		const query = `
+			query ImportRepo($repo_url: String) {
+				importRepo(repo_url: $repo_url)
+			}
+		`;
+
+		const data = await gql.request(query, { repo_url });
+		const repo = data.importRepo;
+
+		if(!repo) {
+			throw new Error(`Invalid repo returned`);
+		}
+
+		// Get and set the new files
+		await getRepo(repo);
 	}
 </script>
 
@@ -128,22 +195,40 @@
 	</div>
 </Popup>
 
+<ImportRepo {display_modal} repo_url={repo_url} {importRepo} />
+<AddDependency {display_modal} />
+<History {display_modal} {getRepo} {history} />
+
 <div class="container">
+	<!--
 	<button class="ui button small framework-selection">
 		WebdriverIO
 		<i class="icon chevron down"></i>
 	</button>
+	-->
 
 	<div class="accordion">
 		<div class="title" data-title="templates" on:click={handleAccordionClick}>
 			<i class="icon angle {accordion.templates ? 'down' : 'right'}"></i>
 			Templates
+
+			<div class="icon-container">
+				<i
+					class="icon info circle"
+					title="Select a template to get started fast."
+				></i>
+			</div>
 		</div>
 
 		{#if accordion.templates}
 			<ul class="template-list">
-				{#each templates as { title, key}}
-					<li data-key={key}>{title}</li>
+				{#each templates[active_framework] as { title, key }}
+					<li
+						on:click={(e) => {
+							getTemplate(active_framework, e.target.dataset.key);
+						}}
+						data-key={key}
+					>{title}</li>
 				{/each}
 			</ul>
 		{/if}
@@ -167,6 +252,13 @@
 		<div class="title" data-title="cliargs" on:click={handleAccordionClick}>
 			<i class="icon angle {accordion.cliargs ? 'down' : 'right'}"></i>
 			Command Line Options
+
+			<div class="icon-container">
+				<i
+					class="icon info circle"
+					title="By default all tests will be ran. This can be overwritten by specifying additional cli arguments"
+				></i>
+			</div>
 		</div>
 
 		{#if accordion.cliargs}
@@ -187,12 +279,47 @@
 			<i class="icon angle {accordion.dependencies ? 'down' : 'right'}"></i>
 			Dependencies
 		</div>
+
+		{#if accordion.dependencies}
+			{#if added_dependencies.length}
+				<ul class="dependencies-list">
+					{#each added_dependencies as { title, version }}
+						<li>
+							<div>{title}</div>
+							<div class="version">{version}</div>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+
+			<div class="pane-button add-dependency">
+				<button
+					data-action
+					class="ui button primary"
+					on:click={(e) => displayModal(e, `dependency`)}
+				>
+					<i class="icon code"></i>
+					Add Dependency
+				</button>
+			</div>
+		{/if}
 	</div>
 
 	<div class="pane-button">
-		<button class="ui button">
+		<button
+			data-action
+			class="ui button primary"
+			on:click={(e) => displayModal(e, `import`)}
+		>
 			<i class="icon github"></i>
 			Import Repo
+		</button>
+	</div>
+
+	<div class="pane-button">
+		<button class="ui button primary">
+			<i class="icon history"></i>
+			History
 		</button>
 	</div>
 </div>
@@ -231,6 +358,11 @@
 		.cliargs-list {
 			margin: 5px 0 5px 10px;
 			padding: 5px 0 0 0;
+
+			li {
+				width: 100%;
+				padding-right: 10px;
+			}
 
 			input {
 				margin-bottom: 10px;
@@ -291,5 +423,24 @@
 		margin-top: 15px;
 		display: flex;
 		justify-content: flex-end;
+	}
+
+	.add-dependency {
+		border-bottom: 1px solid #2d333b;
+	}
+
+	.dependencies-list {
+		margin-left: -30px;
+		margin-right: 10px;
+
+		li {
+			display: flex;
+			color: #8e9195;
+			padding: 1px 0;
+
+			.version {
+				margin-left: auto;
+			}
+		}
 	}
 </style>

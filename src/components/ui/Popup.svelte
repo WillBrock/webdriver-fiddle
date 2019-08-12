@@ -1,5 +1,4 @@
 <script>
-	//export let open = false;
 	export let open;
 </script>
 

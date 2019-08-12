@@ -8,6 +8,7 @@
 	} from '../../../store';
 
 	let hover = null;
+	let editor_expanded = false;
 
 	$: open_files = $files.filter((file) => file.open);
 
@@ -63,7 +64,14 @@
 	</div>
 
 	<div class="expand-editor" title="Expand Editor">
-		<i class="icon angle right large"></i>
+		<i
+			on:click={() => {
+				editor_expanded = !editor_expanded;
+
+				// Handle css
+			}}
+			class="icon angle large {editor_expanded ? `left` : `right`}"
+		></i>
 	</div>
 </div>
 

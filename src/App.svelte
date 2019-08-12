@@ -8,7 +8,7 @@
 	let saving = false;
 
 	onMount(() => {
-		const socket_path = `ws://localhost:12333`;
+		const socket_path = `ws://localhost:12221`;
 		const socket      = new WebSocket(socket_path);
 
 		results_socket.setSocket(socket);

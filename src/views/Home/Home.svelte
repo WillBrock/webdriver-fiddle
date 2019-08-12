@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { files }   from '../../store';
 	import gql         from '../../utils/request';
+	import Loader      from '../../components/ui/Loader.svelte';
 	import LeftPane    from './LeftPane/index.svelte';
 	import MiddlePane  from './MiddlePane/index.svelte';
 	import TestResults from './RightPane/index.svelte';
@@ -34,19 +35,30 @@
 		const variables = {};
 		const route     = window.location.pathname.slice(1);
 
-		if(route) {
-			variables.repo = route;
-		}
-
-		const data  = await gql.request(query, variables);
-		const flat  = data.getRepo;
-
-		console.log(flat, `flat..`)
-		files.setFiles(flat);
+		await getRepo(route);
 	});
 
-	function getTemplate() {
+	async function getRepo(repo = null) {
+		const data  = await gql.request(query, { repo });
+		const flat  = data.getRepo;
 
+		files.setFiles(flat);
+	}
+
+	async function getTemplate(framework, template) {
+		tree = [];
+		const variables = {
+			framework,
+			template
+		};
+
+		console.log(`getTemplate`, framework, template);
+
+		const data = await gql.request(query, variables);
+		const flat = data.getRepo;
+		console.log(flat);
+
+		files.setFiles(flat);
 	}
 
 	function convertToHierarchy(paths) {
@@ -91,9 +103,9 @@
 </script>
 
 {#if !tree.length}
-	loading...
+	<Loader />
 {:else}
-	<LeftPane {tree} {getTemplate} />
+	<LeftPane {tree} {getRepo} {getTemplate} />
 	<MiddlePane {CDN} {saveChanges} />
 	<TestResults />
 {/if}

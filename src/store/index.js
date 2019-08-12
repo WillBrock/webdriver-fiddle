@@ -6,7 +6,7 @@ const createFiles = () => {
 	return {
 		subscribe,
 		setFiles         : files => set(files),
-		updateFiles      : files => update(files),
+		updateFiles      : files => update(tmp => files),
 		addFile          : (data) => {
 			update((files) => {
 				files = files.push(data);

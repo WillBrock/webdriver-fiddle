@@ -82,6 +82,13 @@
 		</button>
 		-->
 	</div>
+
+	<div class="right-button-container">
+		<button class="ui button primary small login">
+			<i class="icon sign in alternate"></i>
+			Login
+		</button>
+	</div>
 </header>
 
 <style lang="scss">
@@ -109,6 +116,10 @@
 			button {
 				margin-right: 7px;
 			}
+		}
+
+		.right-button-container {
+			margin-left: auto;
 		}
 	}
 </style>
