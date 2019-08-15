@@ -17,21 +17,22 @@
 					id,
 					version,
 					title,
+					description,
 				}
 			}
 		`;
 
 		results = (await gql.request(query, { search })).searchPackages;
-		console.log(results, `results`)
-	}, 300);
+	}, 250);
 
-	function selectDependency(e) {
-		const dataset      = e.target.dataset;
+	function selectDependency(id, version) {
 		const package_file = $files.find(file => file.path === PACKAGE_PATH);
 		const content      = JSON.parse(package_file.content);
 
-		content.devDependencies[dataset.id] = dataset.version;
-		package_file.content                = JSON.stringify(content, null, `\t`);
+		content.devDependencies[id] = version;
+		package_file.content        = JSON.stringify(content, null, `\t`);
+
+		console.log(package_file);
 
 		files.updateFileState(PACKAGE_PATH, package_file);
 
@@ -55,16 +56,16 @@
 
 		<div class="results-container">
 			<div class="ui relaxed divided list">
-				{#each results as { title, id, version }}
+				{#each results as { title, id, version, description }}
 					<div
 						class="item"
 						data-id={id}
 						data-version={version}
-						on:click={selectDependency}
+						on:click={() => selectDependency(id, version)}
 					>
 						<div class="content">
-							<span class="header">{title}</span>
-							<div class="description">{version}</div>
+							<span class="header">{title} - {version}</span>
+							<div class="description">{description}</div>
 						</div>
 					</div>
 				{/each}
@@ -76,6 +77,8 @@
 <style lang="scss">
 	.results-container {
 		margin-top: 15px;
+		overflow-y: scroll;
+		max-height: 400px;
 
 		.item {
 			cursor: pointer;

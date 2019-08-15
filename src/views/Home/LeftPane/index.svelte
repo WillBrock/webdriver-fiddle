@@ -15,7 +15,8 @@
 	export let active_framework   = `webdriverio`;
 	export let repo_url           = null;
 	export let history            = [];
-	export let added_dependencies = [];
+
+	$: added_dependencies = getDependencies($files);
 
 	const PACKAGE_PATH = `package.json`;
 
@@ -60,17 +61,6 @@
 		`;
 
 		history = (await gql.request(query, { user : 123 })).getHistory;
-
-		const package_file = $files.find(file => file.path === PACKAGE_PATH);
-		const content      = JSON.parse(package_file.content);
-		const dependencies = content.devDependencies;
-
-		for(const [ title, version ] of Object.entries(dependencies)) {
-			added_dependencies.push({
-				title,
-				version,
-			});
-		}
 	});
 
 	function handleAccordionClick(e) {
@@ -147,6 +137,22 @@
 		// Get and set the new files
 		await getRepo(repo);
 	}
+
+	function getDependencies(all_files) {
+		const package_file = all_files.find(file => file.path === PACKAGE_PATH);
+		const content      = JSON.parse(package_file.content);
+		const dependencies = content.devDependencies;
+		const tmp          = [];
+
+		for(const [ title, version ] of Object.entries(dependencies)) {
+			tmp.push({
+				title,
+				version,
+			});
+		}
+
+		return tmp;
+	}
 </script>
 
 <Popup
@@ -196,7 +202,7 @@
 </Popup>
 
 <ImportRepo {display_modal} repo_url={repo_url} {importRepo} />
-<AddDependency {display_modal} />
+<AddDependency {display_modal} {added_dependencies} />
 <History {display_modal} {getRepo} {history} />
 
 <div class="container">

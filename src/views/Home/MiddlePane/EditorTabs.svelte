@@ -7,7 +7,7 @@
 		editor,
 	} from '../../../store';
 
-	let hover = null;
+	let hover           = null;
 	let editor_expanded = false;
 
 	$: open_files = $files.filter((file) => file.open);
